@@ -25,14 +25,18 @@ router.post(
   async (req, res) => {
     // Handle Errors
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() }); // Status 400: bad request
     }
 
     const { name, email, password } = req.body;
 
     try {
+      let user = await User.findOne({ email });
 
+      if (user) {
+        res.status(400).json({ errors: [{ msg: 'User already exists' }] })
+      }
       res.send('User route');
 
     } catch(err) {
