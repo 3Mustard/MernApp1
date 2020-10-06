@@ -3,7 +3,7 @@ const router = express.Router();
 const normalize = require('normalize-url');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken'); // @doc https://jwt.io/
 const config = require('config');
 const { check, validationResult } = require('express-validator'); // @doc https://express-validator.github.io/docs/
 
