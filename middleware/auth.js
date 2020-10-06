@@ -14,7 +14,7 @@ module.exports = function(req, res, next) {
   try {
     const decoded = jwt.verify(token, config.get('jwtSecret'));
 
-    req.user = decoded.user;
+    req.user = decoded.user; // req.user can be used by routes that call this middleware
     next();
   } catch (err) {
     res.status(401).json({ msg: 'Token is not valid'}); // Status 401: invalid auth credentials
