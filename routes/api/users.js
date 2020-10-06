@@ -3,6 +3,7 @@ const router = express.Router();
 const normalize = require('normalize-url');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator'); // @doc https://express-validator.github.io/docs/
 
 const User = require('../../models/User');
@@ -26,7 +27,7 @@ router.post(
   ],
   // CALLBACK FUNCTION
   async (req, res) => {
-    // Handle Errors
+    // Handle Initial Validation Errors
     const errors = validationResult(req); // Extracts the validation errors from a request and makes them available in a Result object. @functions: .isEmpty(), .array()
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() }); // Status 400: bad request
@@ -35,9 +36,9 @@ router.post(
     const { name, email, password } = req.body;
 
     try {
-      let user = await User.findOne({ email });
+      let user = await User.findOne({ email }); // Query Users table by email
 
-      // Check if user exists
+      // Error if user exists
       if (user) {
         return res.status(400).json({ errors: [{ msg: 'User already exists' }] })
       }
@@ -52,7 +53,7 @@ router.post(
         { forceHttps: true }
       );
 
-      // Create new user
+      // Create new User object
       user = new User({
         name,
         email,
@@ -65,8 +66,10 @@ router.post(
 
       user.password = await bcrypt.hash(password, salt);
 
+      // Save user to DB
       await user.save();
 
+      // Response
       res.send('User registered');
 
     } catch(err) {
