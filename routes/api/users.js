@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const normalize = require('normalize-url');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator'); // @doc https://express-validator.github.io/docs/
@@ -42,11 +43,14 @@ router.post(
       }
 
       // Gravatar setup
-      const avatar = gravatar.url(email, {
-        s: '200', //size
-        r: 'pg', //rating
-        d: 'mm' //default
-      }); 
+      const avatar = normalize(
+        gravatar.url(email, {
+          s: '200', //size
+          r: 'pg', //rating
+          d: 'mm' //default
+        }),
+        { forceHttps: true }
+      );
 
       // Create new user
       user = new User({
