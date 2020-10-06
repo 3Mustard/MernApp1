@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const gravatar = require('gravatar');
+const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator'); // @doc https://express-validator.github.io/docs/
 
 const User = require('../../models/User');
@@ -24,7 +26,7 @@ router.post(
   // CALLBACK FUNCTION
   async (req, res) => {
     // Handle Errors
-    const errors = validationResult(req);
+    const errors = validationResult(req); // Extracts the validation errors from a request and makes them available in a Result object. @functions: .isEmpty(), .array()
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() }); // Status 400: bad request
     }
@@ -34,10 +36,34 @@ router.post(
     try {
       let user = await User.findOne({ email });
 
+      // Check if user exists
       if (user) {
-        res.status(400).json({ errors: [{ msg: 'User already exists' }] })
+        return res.status(400).json({ errors: [{ msg: 'User already exists' }] })
       }
-      res.send('User route');
+
+      // Gravatar setup
+      const avatar = gravatar.url(email, {
+        s: '200', //size
+        r: 'pg', //rating
+        d: 'mm' //default
+      }); 
+
+      // Create new user
+      user = new User({
+        name,
+        email,
+        avatar,
+        password
+      });
+
+      // Encrypt password with bcryptjs
+      const salt = await bcrypt.genSalt(10); // Documentation recommends 10 rounds.
+
+      user.password = await bcrypt.hash(password, salt);
+
+      await user.save();
+
+      res.send('User registered');
 
     } catch(err) {
       console.error(err.message);
