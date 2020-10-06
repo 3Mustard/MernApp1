@@ -4,6 +4,7 @@ const normalize = require('normalize-url');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const config = require('config');
 const { check, validationResult } = require('express-validator'); // @doc https://express-validator.github.io/docs/
 
 const User = require('../../models/User');
@@ -69,8 +70,22 @@ router.post(
       // Save user to DB
       await user.save();
 
-      // Response
-      res.send('User registered');
+      // JWT
+      const payload = {
+        user: {
+          id: user.id
+        }
+      };
+
+      jwt.sign(
+        payload, 
+        config.get('jwtSecret'),
+        { expiresIn: 360000 }, // Set to 3600 in deployment
+        (err, token) => {
+          if (err) throw err;
+          res.json({ token });
+        }
+      );
 
     } catch(err) {
       console.error(err.message);
