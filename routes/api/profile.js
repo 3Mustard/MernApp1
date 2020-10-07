@@ -26,6 +26,33 @@ router.get(
   }
 );
 
+// @route   GET api/profile/user/:user_id
+// @desc    Get profile by id
+// @access  Public
+router.get(
+  // ROUTE
+  '/user/:user_id', 
+  // CALLBACK
+  async (req, res) => {
+    try {
+      // Find a User Profile based on :id in params and add additional User data with populate
+      const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
+
+      // No profile found
+      if (!profile) return res.status(400).json({ msg: 'Profile not found' });
+
+      res.json(profile);
+    } catch(err) {
+      console.error(err.message);
+      // If the :id is too long it isn't recognized as an object but that isn't a Server Error so this if statement was added.
+      if (err.kind == 'ObjectId') {
+        return res.status(400).json({ msg: 'Profile not found' });
+      }
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
 // @route   GET api/profile/me
 // @desc    Get current users profile
 // @access  Private
