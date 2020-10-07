@@ -7,26 +7,49 @@ const normalize = require('normalize-url'); // bring in normalize to get a prope
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
+// @route   GET api/profile/
+// @desc    Get all profiles
+// @access  Public
+router.get(
+  // ROUTE
+  '/', 
+  // CALLBACK
+  async (req, res) => {
+    try {
+
+    } catch(err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
 // @route   GET api/profile/me
 // @desc    Get current users profile
 // @access  Private
-// @params  route'',middleware*,callback function(), *middleware will be called when this route recieves the GET request.
-router.get('/me', auth, async (req, res) => {
-  try {
-    const profile = await Profile
-      .findOne({ user: req.user.id }) // Find profile based on the user associated with it
-      .populate('user', ['name', 'avatar']); // Return this data from the User object as well as the Profile
-    // If no Profile is found
-    if(!profile) {
-      return res.status(400).json({ msg: 'There is no profile for this user' });
-    }
+router.get(
+  // ROUTE
+  '/me', 
+  // MIDDLEWARE: 1.auth
+  auth, 
+  // CALLBACK
+  async (req, res) => {
+    try {
+      const profile = await Profile
+        .findOne({ user: req.user.id }) // Find profile based on the user associated with it
+        .populate('user', ['name', 'avatar']); // Return this data from the User object as well as the Profile
+      // If no Profile is found
+      if(!profile) {
+        return res.status(400).json({ msg: 'There is no profile for this user' });
+      }
 
-    res.json(profile); // Response: current user's profile
-  } catch(err) {
-    console.error(err.message);
-    res.status(500).send('Server error'); // Status 500: Internal Server Error
+      res.json(profile); // Response: current user's profile
+    } catch(err) {
+      console.error(err.message);
+      res.status(500).send('Server error'); // Status 500: Internal Server Error
+    }
   }
-});
+);
 
 // @route   POST api/profile/
 // @desc    Create or update user profile
@@ -34,7 +57,7 @@ router.get('/me', auth, async (req, res) => {
 router.post(
   // ROUTE
   '/',
-  // MIDDLEWARE 1.auth 2.express validations
+  // MIDDLEWARE: 1.auth 2.express validations
   [
     auth, 
     [
