@@ -253,6 +253,102 @@ router.delete(
   }
 );
 
+// @route   PUT api/profile/education
+// @desc    Add profile education
+// @access  Private
+router.put(
+  // ROUTE
+  '/education',
+  // MIDDLEWARE
+  [
+    auth,
+    [
+      check('school', 'School is required')
+        .not()
+        .isEmpty(),
+      check('degree', 'Degree is required')
+        .not()
+        .isEmpty(),
+      check('fieldofstudy', 'Field of Study is required')
+        .not()
+        .isEmpty(),
+      check('from', 'From date is required')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  // CALLBACK
+  async (req, res) => {
+    // Handle validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Deconstruct req.body and build an Exp Object
+    const {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description
+    } = req. body;
+
+    const newEdu = {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description
+    }
+
+    // Find users profile and add the newExp Object to the experience array
+    try { 
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.education.unshift(newEdu);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch(err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+// @route   DELETE api/profile/education/:edu_id
+// @desc    Delete education from a profile
+// @access  Private
+router.delete(
+  // ROUTE
+  '/education/:edu_id',
+  // MIDDLEWARE
+  auth, 
+  // CALLBACK
+  async (req, res) => {
+    try { 
+      const profile = await Profile.findOne({ user: req.user.id });
+      // Get remove index
+      const removeIndex = profile.education.map(item => item.id).indexOf(req.params.edu_id);
+      // Remove education
+      profile.education.splice(removeIndex, 1);
+      // Save profile
+      await profile.save();
+
+      res.json(profile);
+    } catch(err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
 // @route   DELETE api/profile/
 // @desc    delete profile, user and posts
 // @access  Private
