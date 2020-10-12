@@ -160,17 +160,83 @@ router.post(
   }
 );
 
+// @route   PUT api/profile/experience
+// @desc    Add profile experience
+// @access  Private
+router.put(
+  // ROUTE
+  '/experience',
+  // MIDDLEWARE
+  [
+    auth,
+    [
+      check('title', 'Title is required')
+        .not()
+        .isEmpty(),
+      check('company', 'Company is required')
+        .not()
+        .isEmpty(),
+      check('from', 'From date is required')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  // CALLBACK
+  async (req, res) => {
+    // Handle validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Deconstruct req.body and build an Exp Object
+    const {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    } = req. body;
+
+    const newExp = {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    }
+
+    // Find users profile and add the newExp Object to the experience array
+    try { 
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.experience.unshift(newExp);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch(err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
 // @route   DELETE api/profile/
 // @desc    delete profile, user and posts
 // @access  Private
-router.get(
+router.delete(
   // ROUTE
   '/',
   // MIDDLEWARE
   auth, 
   // CALLBACK
   async (req, res) => {
-    try {
+    try { 
       // remove profile
       await Profile.findOneAndRemove({ user: req.user.id });
       // remove user
