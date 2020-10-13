@@ -6,7 +6,6 @@ const config = require('config');
 const { check, validationResult } = require('express-validator'); // @doc https://express-validator.github.io/docs/
 // MIDDLEWARE
 const auth = require('../../middleware/auth');
-const checkObjectId = require('../../middleware/checkObjectId');
 // MODELS
 const User = require('../../models/User');
 
@@ -14,16 +13,23 @@ const User = require('../../models/User');
 // @desc    Return current User based on decoded jwt token
 // @access  Public
 // @params route'',middleware*,callback function(), *middleware will be called when this route recieves the GET request.
-router.get('/', auth, async (req, res) => {
-  try {
-    // Find and return user based on id and omit the password field.
-    const user = await User.findById(req.user.id).select('-password'); // NOTE: req.user is assigned in auth middleware 
-    res.json(user);
-  } catch(err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+router.get(
+  // ROUTE
+  '/',
+  // MIDDLEWARE
+  auth,
+  // CALLBACK
+  async (req, res) => {
+    try {
+      // Find and return user based on id and omit the password field.
+      const user = await User.findById(req.user.id).select('-password'); // NOTE: req.user is assigned in auth middleware 
+      res.json(user);
+    } catch(err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
   }
-});
+);
 
 // @route   POST api/auth
 // @desc    Authenticate user and get token / login request

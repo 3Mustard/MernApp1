@@ -3,9 +3,11 @@ const axios = require('axios');
 const config = require('config');
 const { check, validationResult } = require('express-validator'); // @doc https://express-validator.github.io/docs/
 const router = express.Router();
-const auth = require('../../middleware/auth'); // gives access to req.user 
 const normalize = require('normalize-url'); // bring in normalize to get a proper url, regardless of what user entered
-
+// MIDDLEWARE
+const auth = require('../../middleware/auth'); // gives access to req.user 
+const checkObjectId = require('../../middleware/checkObjectId');
+// MODELS
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
