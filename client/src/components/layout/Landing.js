@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 const Landing = () => {
   return (
@@ -10,8 +11,8 @@ const Landing = () => {
             Create a profile/portfolio, share posts and chat.
           </p>
           <div class="buttons">
-            <a href="/register" class="btn btn-primary">Sign Up</a>
-            <a href="/login" class="btn">Login</a>
+            <Link to="/register" class="btn btn-primary">Sign Up</Link>
+            <Link to="/login" class="btn">Login</Link>
           </div>
         </div>
       </div>
