@@ -32,7 +32,7 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "concurrently": "^5.3.0",
+    "concurrently": "^5.3.0", 
     "nodemon": "^2.0.4"
   },
   "proxy": "http://localhost:5000"
