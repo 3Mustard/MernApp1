@@ -8,4 +8,4 @@ const Login = () => {
   )
 }
 
-export const Login;
+export default Login;

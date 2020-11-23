@@ -9,9 +9,9 @@ const Navbar = () => {
         </a>
       </h1>
       <ul>
-        <li><a href="profiles.html">Profiles</a></li>
-        <li><a href="register.html">Register</a></li>
-        <li><a href="login.html">Login</a></li>
+        <li><a href="/profiles">Profiles</a></li>
+        <li><a href="/register">Register</a></li>
+        <li><a href="/login">Login</a></li>
       </ul>
     </nav>
   )

@@ -10,8 +10,8 @@ const Landing = () => {
             Create a profile/portfolio, share posts and chat.
           </p>
           <div class="buttons">
-            <a href="register.html" class="btn btn-primary">Sign Up</a>
-            <a href="login.html" class="btn">Login</a>
+            <a href="/register" class="btn btn-primary">Sign Up</a>
+            <a href="/login" class="btn">Login</a>
           </div>
         </div>
       </div>
