@@ -1,0 +1,1 @@
+use cmd 'npm run dev' to run node and react with concurrently
